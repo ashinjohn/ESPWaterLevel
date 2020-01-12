@@ -26,11 +26,11 @@ const char * myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 void setup() {
   Serial.begin(115200);  // Initialize serial
-/*
+
   // Initialize ThingSpeak
   WiFi.mode(WIFI_STA);
   ThingSpeak.begin(client);
-*/
+
   // SR04 PIN Initialisation
   pinMode(SRTrig, OUTPUT); // Sets the trigPin as an Output
   pinMode(SREcho, INPUT); // Sets the echoPin as an Input
@@ -40,7 +40,7 @@ void setup() {
 void loop() {
 
   // Connect or reconnect to WiFi
-  /*
+
     if (WiFi.status() != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(SECRET_SSID);
@@ -55,7 +55,7 @@ void loop() {
     // Write to ThingSpeak. Here, we write to field 1.
 
 
-    int x = ThingSpeak.writeField(myChannelNumber, 1, number, myWriteAPIKey);
+    int x = ThingSpeak.writeField(myChannelNumber, 1, Waterlevel(), myWriteAPIKey);
     if (x == 200) {
     Serial.println("Channel update successful.");
     }
@@ -63,15 +63,7 @@ void loop() {
     Serial.println("Problem updating channel. HTTP error code " + String(x));
     }
 
-    // change the value
-    number++;
-    if (number > 99) {
-    number = 0;
-    }
-  */
-  Serial.println(Waterlevel());
-
-  delay(2000); // Wait 20 seconds to update the channel again
+  delay(20000); // Wait 20 seconds to update the channel again
 }
 
 int Waterlevel() {
@@ -89,6 +81,8 @@ int Waterlevel() {
 
   // Reads the echo Pin of SR04, returns the sound wave travel time in microseconds
   TimeofFlight = pulseIn(SREcho, HIGH); // pulseIn gets duration until the pin toggles
-
-  return (TimeofFlight * 0.034 / 2);
+  distance=TimeofFlight * 0.034 / 2;
+  Serial.print("\nWater Level = ");
+  Serial.println(distance);
+  return (distance);
 }
