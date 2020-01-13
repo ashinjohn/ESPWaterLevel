@@ -13,8 +13,8 @@
 #include <ESP8266WiFi.h>
 
 // SR04 PIN Mapping
-const int SREcho = D3; // D3 connected to Echo pin
-const int SRTrig = D4; // D4 connected to Trigger pin
+const int SREcho = D0; // D0 connected to Echo pin
+const int SRTrig = D1; // D1 connected to Trigger pin
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password
@@ -55,7 +55,7 @@ void loop() {
     // Write to ThingSpeak. Here, we write to field 1.
 
 
-    int x = ThingSpeak.writeField(myChannelNumber, 1, Waterlevel(), myWriteAPIKey);
+    int x = ThingSpeak.writeField(myChannelNumber, 1,Waterlevel(), myWriteAPIKey);
     if (x == 200) {
     Serial.println("Channel update successful.");
     }
