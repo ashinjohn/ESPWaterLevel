@@ -84,5 +84,5 @@ float Waterlevel() {
   distance=TimeofFlight * 0.034 / 2;
   Serial.print("\nWater Level = ");
   Serial.println(distance);
-  return (distance);
+  return (120-distance); //120cm Tank height subtracted to get water level inside tank
 }
