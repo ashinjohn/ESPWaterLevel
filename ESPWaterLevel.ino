@@ -66,8 +66,8 @@ void loop() {
   delay(20000); // Wait 20 seconds to update the channel again
 }
 
-int Waterlevel() {
-  int distance = 0;
+float Waterlevel() {
+  float distance = 0;
   long TimeofFlight = 0; // Variable to store the duaration of TOF of the Ultrasonic pulse
   
   // Clears the trigger Pin of SR04
