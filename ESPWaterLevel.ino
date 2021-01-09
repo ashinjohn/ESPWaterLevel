@@ -1,9 +1,10 @@
 /*
-   ESP Water Level
+   ESP Water Level Controller
 
-   Description: Pushes the water level in my rooftop water tank to Thinkspeak.
+   Description: Monitors the water level in my rooftop water tank and operates the water pump 
+                Also Pushes the water level to Thinkspeak.
 
-   Hardware: WaterLevel -> SR04 -> ESP8266 -> Thingspeak
+   Hardware: WaterLevel -> SR04 -> ESP8266 ->Pump Control -> Thingspeak
 
    Install ESP8266 library from :http://arduino.esp8266.com/stable/package_esp8266com_index.json
    Install Thingspeak library from : https://github.com/mathworks/thingspeak-arduino
@@ -13,8 +14,8 @@
 #include <ESP8266WiFi.h>
 
 // SR04 PIN Mapping
-const int SREcho = D0; // D0 connected to Echo pin
-const int SRTrig = D1; // D1 connected to Trigger pin
+const int SREcho = 0; // D0 connected to Echo pin
+const int SRTrig = 1; // D1 connected to Trigger pin
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password
@@ -43,7 +44,7 @@ void loop() {
 
     if (WiFi.status() != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
-    Serial.println(SECRET_SSID);
+    Serial.println(ssid);
     while (WiFi.status() != WL_CONNECTED) {
       WiFi.begin(ssid, pass);  // Connect to WPA/WPA2 network. Change this line if using open or WEP network
       Serial.print(".");
