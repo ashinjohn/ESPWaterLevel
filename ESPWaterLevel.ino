@@ -18,6 +18,13 @@
 const int SREcho = D7; // D7 connected to Echo pin
 const int SRTrig = D6; // D6 connected to Trigger pin
 
+// Hardware Mapping
+const int PumpControl = D5;
+const int ChargingIndicator = 7; //SO pin of ESP8266
+const int FillButton = D4;
+const int LevelLED = D8;
+
+
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
@@ -85,6 +92,7 @@ float Waterlevel() {
   TimeofFlight = pulseIn(SREcho, HIGH); // pulseIn gets duration until the pin toggles
   distance = TimeofFlight * 0.034 / 2;
   Serial.print("\nWater Level = ");
-  Serial.println(distance);
+  Serial.print(distance);
+  Serial.println(" cm");
   return (120 - distance); //120cm Tank height subtracted to get water level inside tank
 }
