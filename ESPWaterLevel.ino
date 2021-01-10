@@ -1,7 +1,7 @@
 /*
    ESP Water Level Controller
 
-   Description: Monitors the water level in my rooftop water tank and operates the water pump 
+   Description: Monitors the water level in my rooftop water tank and operates the water pump
                 Also Pushes the water level to Thinkspeak.
 
    Hardware: WaterLevel -> SR04 -> ESP8266 ->Pump Control -> Thingspeak
@@ -10,12 +10,13 @@
    Install Thingspeak library from : https://github.com/mathworks/thingspeak-arduino
 */
 #include "credentails.h"        //This file stores all of the private data like Wifi credentials
-#include "ThingSpeak.h"
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include "ThingSpeak.h"
 
 // SR04 PIN Mapping
-const int SREcho = 0; // D0 connected to Echo pin
-const int SRTrig = 1; // D1 connected to Trigger pin
+const int SREcho = D7; // D7 connected to Echo pin
+const int SRTrig = D6; // D6 connected to Trigger pin
 
 char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password
@@ -27,10 +28,10 @@ const char * myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 void setup() {
   Serial.begin(115200);  // Initialize serial
-
+  Serial.println("Start");
   // Initialize ThingSpeak
-  WiFi.mode(WIFI_STA);
-  ThingSpeak.begin(client);
+   WiFi.mode(WIFI_STA);
+   ThingSpeak.begin(client);
 
   // SR04 PIN Initialisation
   pinMode(SRTrig, OUTPUT); // Sets the trigPin as an Output
@@ -39,10 +40,10 @@ void setup() {
 }
 
 void loop() {
-
+  
   // Connect or reconnect to WiFi
 
-    if (WiFi.status() != WL_CONNECTED) {
+  if (WiFi.status() != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
     while (WiFi.status() != WL_CONNECTED) {
@@ -51,28 +52,28 @@ void loop() {
       delay(5000);
     }
     Serial.println("\nConnected.");
-    }
+  }
 
-    // Write to ThingSpeak. Here, we write to field 1.
+  // Write to ThingSpeak. Here, we write to field 1.
 
 
-    int x = ThingSpeak.writeField(myChannelNumber, 1,Waterlevel(), myWriteAPIKey);
-    if (x == 200) {
+  int x = ThingSpeak.writeField(myChannelNumber, 1, Waterlevel(), myWriteAPIKey);
+  if (x == 200) {
     Serial.println("Channel update successful.");
-    }
-    else {
+  }
+  else {
     Serial.println("Problem updating channel. HTTP error code " + String(x));
-    }
+  }
 
-  delay(20000); // Wait 20 seconds to update the channel again
+  delay(200); // Wait 20 seconds to update the channel again
 }
 
 float Waterlevel() {
   float distance = 0;
   long TimeofFlight = 0; // Variable to store the duaration of TOF of the Ultrasonic pulse
-  
+
   // Clears the trigger Pin of SR04
-  digitalWrite(SRTrig, LOW); 
+  digitalWrite(SRTrig, LOW);
   delayMicroseconds(2);
 
   // Sets the trigger Pin of SR04 in HIGH state for 10 micro seconds
@@ -82,8 +83,8 @@ float Waterlevel() {
 
   // Reads the echo Pin of SR04, returns the sound wave travel time in microseconds
   TimeofFlight = pulseIn(SREcho, HIGH); // pulseIn gets duration until the pin toggles
-  distance=TimeofFlight * 0.034 / 2;
+  distance = TimeofFlight * 0.034 / 2;
   Serial.print("\nWater Level = ");
   Serial.println(distance);
-  return (120-distance); //120cm Tank height subtracted to get water level inside tank
+  return (120 - distance); //120cm Tank height subtracted to get water level inside tank
 }
