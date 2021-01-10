@@ -22,11 +22,11 @@
 // SR04 PIN Mapping
 const int SREcho = D7; // D7 connected to Echo pin
 const int SRTrig = D6; // D6 connected to Trigger pin
+float LevelofWater = 0;
 
 // Hardware Mapping
 const int PumpControl = D5;
-const int ChargingIndicator = 7; //SO pin of ESP8266
-const int FillButton = D4;
+const int ChargingIndicator = D4;
 const int LevelLED = D8;
 
 // WiFi Configuration
@@ -42,6 +42,9 @@ const char * myWriteAPIKey = SECRET_WRITE_APIKEY;
 // OLED Object Creation
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
 
+// Solar Charging Detection
+bool Charging = false;
+int i = 0;
 void setup() {
   Serial.begin(115200);  // Initialize serial
   Serial.println("Start");
@@ -62,9 +65,32 @@ void setup() {
   display.print("ESP Water Level");
   display.setCursor(0, 0);
   display.display();
+
+  // Solar Charging Detect pin initialisation
+  pinMode(ChargingIndicator, INPUT);
 }
 
 void loop() {
+
+  //Capturing parameters
+  Charging = SolarCharging();
+
+
+  //  LevelofWater = Waterlevel();
+
+
+  Serial.println("bla");
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  if (Charging == true) {
+    display.print("Solar charging");
+  }
+  else {
+    display.print("No Solar ");
+  }
+  display.display();
+  delay(1000);
+  //  ESP.deepSleep(5000000);
 
   // Connect or reconnect to WiFi
   /*
@@ -114,4 +140,18 @@ float Waterlevel() {
   Serial.print(distance);
   Serial.println(" cm");
   return (120 - distance); //120cm Tank height subtracted to get water level inside tank
+}
+
+bool SolarCharging() {
+  int SolarCharge = 0;
+  for (i = 0; i < 10; i++) {
+    SolarCharge += digitalRead(ChargingIndicator); //Read state of charging indication LED
+    delay(200);
+  }
+  if ( SolarCharge > 6) {
+    return false;
+  }
+  else {
+    return true;
+  }
 }
